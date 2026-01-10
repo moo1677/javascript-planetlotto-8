@@ -1,23 +1,23 @@
 import { InputView } from './view.js';
 import { OutputView } from './view.js';
 import LottoController from './controller/LottoController.js';
-import Lotto from './model/Lotto.js';
-import WinningLotto from './model/WinningLotto.js';
 import { Validation } from './util/Validation.js';
 import { Console } from '@woowacourse/mission-utils';
+
 class App {
+  winningNumber;
+  bonusNumber;
   async run() {
     const purchaseAmount = await this.#getValidPurchaseAmount();
-    const manager = new LottoController(purchaseAmount);
+    const manager = new LottoController();
 
-    const randomLotto = manager.getRandomLotto();
+    const randomLotto = manager.createRandomLotto(purchaseAmount);
     this.#printLotto(randomLotto);
 
-    const mainLotto = await this.#getValidWinningLotto();
-    const bonusNumber = await this.#getValidBonusNumber(mainLotto);
+    this.winningNumber = await this.#getValidWinningLotto();
+    this.bonusNumber = await this.#getValidBonusNumber();
 
-    const winnerLotto = new WinningLotto(mainLotto, bonusNumber);
-    const lottoResult = manager.runLottoMachine(winnerLotto);
+    const lottoResult = manager.runLottoMachine(this.winningNumber);
     this.#printResult(lottoResult);
   }
   async #getValidPurchaseAmount() {
@@ -34,22 +34,19 @@ class App {
   async #getValidWinningLotto() {
     while (true) {
       try {
-        const winningNumber = await InputView.askWinningLotto();
-        const winningLotto = new Lotto(winningNumber);
-        return winningLotto;
+        const winningNumberString = await InputView.askWinningLotto();
+        Validation.validateLottoNumber(winningNumberString);
+        return winningNumberString;
       } catch (error) {
         Console.print(error.message);
       }
     }
   }
-  async #getValidBonusNumber(mainLotto) {
+  async #getValidBonusNumber() {
     while (true) {
       try {
         const bonusNumberAsNumber = await InputView.askBonusNumber();
-        Validation.validateBonusNumber(
-          bonusNumberAsNumber,
-          mainLotto.getNumber(),
-        );
+        Validation.validateBonusNumber(bonusNumberAsNumber, this.winningNumber);
         return bonusNumberAsNumber;
       } catch (error) {
         Console.print(error.message);

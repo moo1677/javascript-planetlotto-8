@@ -1,5 +1,6 @@
 import { LOTTO_CONSTANTS } from '../constants/format.js';
 import { ERROR_MESSAGE } from '../constants/message.js';
+
 class Lotto {
   #numbers;
 
@@ -41,13 +42,14 @@ class Lotto {
   //   */
   //   return [...this.#numbers];
   // }
-  
   matchCount(winningNumber) {
-    return lottoNumbers.filter((number) => winningNumber.includes(number))
-      .length;
+    const matchNumber = this.#numbers.filter((number) =>
+      winningNumber.includes(number),
+    ).length;
+    return matchNumber;
   }
   containBonusNumber(bonusNumber) {
-    return lottoNumbers.includes(bonusNumber);
+    return this.#numbers.includes(bonusNumber);
   }
 }
 

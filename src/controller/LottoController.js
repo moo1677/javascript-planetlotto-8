@@ -1,31 +1,30 @@
-
 import { LOTTO_CONSTANTS, PRICE_INFO } from '../constants/format.js';
 import LottoResultCalculator from '../service/LottoResultCalculator.js';
 import { LottoCreator } from '../util/LottoCreator.js';
 import Lotto from '../model/Lotto.js';
 
 export default class LottoController {
-  #purchaseAmount;
-  #lottoCount;
   #lottos;
   #winnerLotto;
+  #bonusNumber;
   #lottoResultArray;
   #lottoResult;
-  constructor(purchaseAmount) {
-    this.#purchaseAmount = purchaseAmount;
-    this.#lottoCount = purchaseAmount / LOTTO_CONSTANTS.PRICE;
+  constructor() {
     this.#lottos = [];
     this.#lottoResultArray = [];
     this.#lottoResult = [0, 0, 0, 0, 0, 0];
   }
-  runLottoMachine(winnerLotto) {
+  runLottoMachine(winnerLotto, bonusNumber) {
     this.#winnerLotto = winnerLotto;
+    this.#bonusNumber = bonusNumber;
     this.#calculatorLotto();
     const result = this.#setResult();
     return result;
   }
-  createRandomLotto() {
-    const randomLotto = LottoCreator.setLotto(this.#lottoCount);
+  createRandomLotto(purchaseAmount) {
+    const randomLotto = LottoCreator.setLotto(
+      purchaseAmount / LOTTO_CONSTANTS.PRICE,
+    );
     randomLotto.forEach((lottos) => {
       this.#lottos.push(new Lotto(lottos));
     });
@@ -34,7 +33,11 @@ export default class LottoController {
   #calculatorLotto() {
     this.#lottos.forEach((lotto) => {
       this.#lottoResultArray.push(
-        LottoResultCalculator.getRank(lotto, this.#winnerLotto),
+        LottoResultCalculator.getRank(
+          lotto,
+          this.#winnerLotto,
+          this.#bonusNumber,
+        ),
       );
     });
     this.#statisticsLotto();
