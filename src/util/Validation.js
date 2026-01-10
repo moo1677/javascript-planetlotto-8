@@ -12,8 +12,8 @@ export const Validation = {
   },
   //보너스 번호를 검증합니다
   validateBonusNumber(bonusNumber, winnerLotto) {
-    validateRange(bonusNumber);
-    validateNoDuplicates(bonusNumber, winnerLotto);
+    bonusNumberValidateRange(bonusNumber);
+    bonusNumberValidateNoDuplicates(bonusNumber, winnerLotto);
   },
   //로또 번호를 검증합니다
   validateLottoNumber(numbers) {
@@ -22,7 +22,7 @@ export const Validation = {
     lottoValidateNoDuplicates(numbers);
   },
 };
-const validateRange = (bonusNumber) => {
+const bonusNumberValidateRange = (bonusNumber) => {
   const isValid = (number) =>
     Number.isInteger(number) &&
     number >= LOTTO_CONSTANTS.MIN_NUMBER &&
@@ -30,7 +30,7 @@ const validateRange = (bonusNumber) => {
   if (!isValid(bonusNumber))
     throw new Error(ERROR_MESSAGE.INVALID_BONUS_NUMBER_RANGE);
 };
-const validateNoDuplicates = (bonusNumber, winnerLotto) => {
+const bonusNumberValidateNoDuplicates = (bonusNumber, winnerLotto) => {
   if (winnerLotto.includes(bonusNumber))
     throw new Error(ERROR_MESSAGE.DUPLICATE_BONUS_NUMBER);
 };
