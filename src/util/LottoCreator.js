@@ -3,8 +3,7 @@ import Lotto from '../model/Lotto.js';
 import { LOTTO_CONSTANTS } from '../constants/format.js';
 
 export const LottoCreator = {
-  setLotto(purchaseAmount) {
-    const lottoCount = purchaseAmount / LOTTO_CONSTANTS.PRICE;
+  setLotto(lottoCount) {
     let lottos = [];
     for (let i = 0; i < lottoCount; i += 1) {
       const numbers = sortNumber(randomNumbers());

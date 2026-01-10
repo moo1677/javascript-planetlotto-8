@@ -2,6 +2,8 @@ import { InputView, OutputView } from '../view.js';
 import LottoResultCalculator from '../service/LottoResultCalculator.js';
 import { LottoCreator } from '../util/LottoCreator.js';
 import { Validation } from '../util/Validation.js';
+import { LOTTO_CONSTANTS } from '../constants/format.js';
+import Lotto from '../model/Lotto.js';
 
 export default class LottoController {
   #lottos;
@@ -18,9 +20,7 @@ export default class LottoController {
   async runLottoMachine() {
     const purchaseAmount = await this.#getValidPurchaseAmount();
 
-    const lottoArray = LottoCreator.setLotto(purchaseAmount);
-    this.#printLotto(lottoArray);
-    this.lottos = LottoCreator.LottoGenerator(lottoArray);
+    this.#createRandomLotto(purchaseAmount);
 
     this.#winnerLotto = await this.#getValidWinningLotto();
     this.#bonusNumber = await this.#getValidBonusNumber();
@@ -62,15 +62,15 @@ export default class LottoController {
       }
     }
   }
-  //   createRandomLotto(purchaseAmount) {
-  //     const randomLotto = LottoCreator.setLotto(
-  //       purchaseAmount / LOTTO_CONSTANTS.PRICE,
-  //     );
-  //     randomLotto.forEach((lottos) => {
-  //       this.#lottos.push(new Lotto(lottos));
-  //     });
-  //     return randomLotto;
-  //   }
+  #createRandomLotto(purchaseAmount) {
+    const randomLotto = LottoCreator.setLotto(
+      purchaseAmount / LOTTO_CONSTANTS.PRICE,
+    );
+    randomLotto.forEach((lottos) => {
+      this.#lottos.push(new Lotto(lottos));
+    });
+    this.#printLotto(randomLotto);
+  }
   #calculatorLotto() {
     this.#lottos.forEach((lotto) => {
       this.#lottoResultArray.push(
