@@ -5,7 +5,7 @@ class Lotto {
 
   constructor(numbers) {
     this.#validate(numbers);
-    this.#numbers = this.#sortNumber(numbers);
+    this.#numbers = numbers;
   }
 
   #validate(numbers) {
@@ -34,15 +34,20 @@ class Lotto {
     if (uniqueNumbers.size !== numbers.length)
       throw new Error(ERROR_MESSAGE.DUPLICATE_LOTTO_NUMBERS);
   }
-  #sortNumber(numbers) {
-    return [...numbers].sort((a, b) => a - b);
+  // getNumber() {
+  //   /*
+  //   return this.#numbers 로 반환할 경우 원본 메모리주소를 그대로 반환하기 때문에 캡슐화가 깨질 수 있다.
+  //   따라서 스프레드 연산자[...array] 를 사용하여 복사본을 안전하게 return 할 수 있다.
+  //   */
+  //   return [...this.#numbers];
+  // }
+  
+  matchCount(winningNumber) {
+    return lottoNumbers.filter((number) => winningNumber.includes(number))
+      .length;
   }
-  getNumber() {
-    /* 
-    return this.#numbers 로 반환할 경우 원본 메모리주소를 그대로 반환하기 때문에 캡슐화가 깨질 수 있다.
-    따라서 스프레드 연산자[...array] 를 사용하여 복사본을 안전하게 return 할 수 있다.
-    */
-    return [...this.#numbers];
+  containBonusNumber(bonusNumber) {
+    return lottoNumbers.includes(bonusNumber);
   }
 }
 

@@ -1,6 +1,7 @@
-import randomNumbers from '../service/randomNumbers.js';
+
 import { LOTTO_CONSTANTS, PRICE_INFO } from '../constants/format.js';
 import LottoResultCalculator from '../service/LottoResultCalculator.js';
+import { LottoCreator } from '../util/LottoCreator.js';
 import Lotto from '../model/Lotto.js';
 
 export default class LottoController {
@@ -21,19 +22,13 @@ export default class LottoController {
     this.#winnerLotto = winnerLotto;
     this.#calculatorLotto();
     const result = this.#setResult();
-
     return result;
   }
-  #createLotto() {
-    for (let i = 0; i < this.#lottoCount; i += 1) {
-      const numbers = randomNumbers();
-      const lotto = new Lotto(numbers);
-      this.#lottos.push(lotto.getNumber());
-    }
-  }
-  getRandomLotto() {
-    this.#createLotto();
-    const randomLotto = this.#lottos;
+  createRandomLotto() {
+    const randomLotto = LottoCreator.setLotto(this.#lottoCount);
+    randomLotto.forEach((lottos) => {
+      this.#lottos.push(new Lotto(lottos));
+    });
     return randomLotto;
   }
   #calculatorLotto() {
