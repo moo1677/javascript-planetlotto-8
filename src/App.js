@@ -1,10 +1,9 @@
 import LottoController from './controller/LottoController.js';
 
-
 class App {
   async run() {
     const manager = new LottoController();
-    manager.runLottoMachine();
+    await manager.runLottoMachine();
   }
 }
 export default App;

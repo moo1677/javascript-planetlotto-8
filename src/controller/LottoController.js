@@ -2,8 +2,6 @@ import { InputView, OutputView } from '../view.js';
 import LottoResultCalculator from '../service/LottoResultCalculator.js';
 import { LottoCreator } from '../util/LottoCreator.js';
 import { Validation } from '../util/Validation.js';
-import { LOTTO_CONSTANTS } from '../constants/format.js';
-import Lotto from '../model/Lotto.js';
 
 export default class LottoController {
   #lottos;
@@ -14,13 +12,15 @@ export default class LottoController {
   constructor() {
     this.#lottos = [];
     this.#lottoResultArray = [];
-    this.#lottoResult = [0, 0, 0, 0, 0, 0];
+    this.#lottoResult = new Map();
   }
 
   async runLottoMachine() {
     const purchaseAmount = await this.#getValidPurchaseAmount();
 
-    this.#createRandomLotto(purchaseAmount);
+    const randomLotto = LottoCreator.setLotto(purchaseAmount);
+    this.#lottos = LottoCreator.LottoGenerator(randomLotto);
+    this.#printLotto(randomLotto);
 
     this.#winnerLotto = await this.#getValidWinningLotto();
     this.#bonusNumber = await this.#getValidBonusNumber();
@@ -62,15 +62,6 @@ export default class LottoController {
       }
     }
   }
-  #createRandomLotto(purchaseAmount) {
-    const randomLotto = LottoCreator.setLotto(
-      purchaseAmount / LOTTO_CONSTANTS.PRICE,
-    );
-    randomLotto.forEach((lottos) => {
-      this.#lottos.push(new Lotto(lottos));
-    });
-    this.#printLotto(randomLotto);
-  }
   #calculatorLotto() {
     this.#lottos.forEach((lotto) => {
       this.#lottoResultArray.push(
@@ -84,19 +75,12 @@ export default class LottoController {
     this.#statisticsLotto();
   }
   #statisticsLotto() {
+    for (let rank = 0; rank <= 6; rank++) {
+      this.#lottoResult.set(rank, 0);
+    }
     this.#lottoResultArray.forEach((rank) => {
-      this.#lottoResult[rank] += 1;
+      this.#lottoResult.set(rank, this.#lottoResult.get(rank) + 1);
     });
-    this.#lottoResult = this.#setResult();
-  }
-  #setResult() {
-    let lottoResult = new Map();
-    let sum = 0;
-    this.#lottoResult.map((rank) => {
-      lottoResult.set(sum, rank);
-      sum = sum + 1;
-    });
-    return lottoResult;
   }
   #printResult(lottoResult) {
     OutputView.printResult(lottoResult);
